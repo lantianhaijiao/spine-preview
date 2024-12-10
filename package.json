@@ -1,0 +1,101 @@
+{
+  "name": "boast",
+  "displayName": "夸夸",
+  "description": "彩虹屁",
+  "author": "wanghaobin <1159472304@qq.com>",
+  "version": "0.0.2",
+  "icon": "favicon.ico",
+  "publisher": "lantianhaijiao",
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:boast.encourage",
+    "onCommand:boast.deleteConsole",
+    "onCommand:boast.fileDetail",
+    "onCommand:boast.rgbHex"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "boast.encourage",
+        "title": "夸夸"
+      },
+      {
+        "command": "boast.deleteConsole",
+        "title": "去console"
+      },
+      {
+        "command": "boast.package",
+        "title": "package"
+      },
+      {
+        "command": "boast.fileDetail",
+        "title": "文件详情"
+      },
+      {
+        "command": "boast.rgbHex",
+        "title": "rgb<=>hex"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "boast.encourage",
+        "key": "ctrl+shift+k",
+        "mac": "ctrl+shift+k"
+      },
+      {
+        "command": "boast.deleteConsole",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r"
+      },
+      {
+        "command": "boast.package",
+        "key": "ctrl+click",
+        "mac": "cmd+click"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "boast.rgbHex",
+          "group": "navigation",
+          "when": "editorHasSelection"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "boast.fileDetail",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.88.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3",
+    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-electron": "^2.3.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
