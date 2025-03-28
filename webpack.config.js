@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-28 10:59:48
+ * @LastEditTime: 2025-03-28 16:55:40
  * @Description: Do not edit
  */
 //@ts-check
@@ -61,7 +61,7 @@ const extensionConfig = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            // drop_console: true, // 移除所有 console
+            drop_console: true, // 移除所有 console
             drop_debugger: true, // 移除 debugger
           },
         },

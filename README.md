@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-28 16:24:38
+ * @LastEditTime: 2025-03-28 18:22:58
  * @Description: Do not edit
 -->
 # Spine Preview
@@ -34,6 +34,8 @@ Initial release of Spine Preview with the following features:
 
 - Preview Spine files directly within Visual Studio Code.
 - Support pause and resume playback
+- Step
+- Right click the folder containing .json, .atlas, .png, and click [Play Spine]
 
 ## Following extension guidelines
 
