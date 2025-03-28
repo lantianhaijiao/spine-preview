@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta content="telephone=no" name="format-detection" />
+    <meta content="email=no" name="format-detection" />
+    <title>Spine Preview</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      body {
+        padding: 0 !important;
+      }
+      #animation-player {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .button-container {
+        position: fixed;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        bottom: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 5px;
+        margin: 4px;
+        border: 1px solid #909090;
+        cursor: pointer;
+      }
+      .btn-1 {
+        background-color: #000;
+      }
+      .btn-2 {
+        background-color: #fff;
+      }
+      .btn-3 {
+        background-color: #00bcd3;
+      }
+      #spine-info-box {
+        position: fixed;
+        background-color: rgba(0, 0, 0, 0.5);
+        width: 200px;
+        top: 0;
+        left: 0;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        padding: 10px;
+        min-height: 50px;
+        border-radius: 3px;
+      }
+      #spine-info-box span {
+        display: inline-block;
+        min-width: 40px;
+      }
+
+      /* 选择框样式 */
+      #animationSelector {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px 30px 8px 10px;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        margin: 0 10px;
+      }
+
+      #animationSelector:hover {
+        border-color: #999;
+      }
+
+      #animationSelector:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+
+      /* 选项样式 */
+      #animationSelector option {
+        background-color: #fff;
+        color: #333;
+      }
+
+      #animationSelector option:hover {
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./pixi.min.js"></script>
+    <script src="./spine-pixi-v8.min.js"></script>
+    <div id="animation-player"></div>
+    <div id="spine-info-box">
+      <h3>Spine信息</h3>
+      <div id="spine-info"></div>
+    </div>
+    <div class="button-container">
+      <div class="btn btn-1" onclick="changeBg(1)"></div>
+      <div class="btn btn-2" onclick="changeBg(2)"></div>
+      <div class="btn btn-3" onclick="changeBg(3)"></div>
+      <select id="animationSelector"></select>
+    </div>
+    <script>
+      // const vscode = acquireVsCodeApi();
+      var app;
+      // 监听来自扩展的消息
+      window.addEventListener("message", (event) => {
+        const message = event.data;
+        console.log('message--', event.data);
+        if (message.type === "loadFile") {
+          init(message.json, message.atlas).catch((err) => {
+            console.log("onError", err);
+          });
+        }
+      });
+      async function getAllAnimations(spineBody) {
+        // 获取所有动画名称
+        const animations = spineBody.skeleton.data.animations;
+        const animationNames = [];
+        animations.forEach((animation) => {
+          animationNames.push(animation.name);
+        });
+
+        // 创建 select 选择框
+        const selector = document.getElementById("animationSelector");
+        animationNames.forEach((name) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          selector.appendChild(option);
+        });
+        // 播放第一个动画
+        if (animationNames.length > 0) {
+          spineBody.state.setAnimation(0, animationNames[0], true);
+        }
+        // 监听选择事件
+        selector.addEventListener("change", (event) => {
+          const selectedAnimation = event.target.value;
+          spineBody.state.setAnimation(0, selectedAnimation, true);
+        });
+      }
+      async function playSpine(json, atlas) {
+        // 加载 Spine 资源
+        PIXI.Assets.add({
+          alias: "spineData",
+          src: json,
+        });
+        PIXI.Assets.add({
+          alias: "spineAtlas",
+          src: atlas,
+        });
+        await PIXI.Assets.load(["spineData", "spineAtlas"]);
+
+        const spineBody = window.spine.Spine.from({
+          atlas: "spineAtlas",
+          skeleton: "spineData",
+          scale: 0.5,
+        });
+        console.log("spineBody", spineBody.skeleton.data.animations);
+        const spineInfo = spineBody.getBounds();
+        spineBody.state.data.defaultMix = 0.2;
+        spineBody.x = window.innerWidth / 2;
+        spineBody.y = window.innerHeight / 2 +  + spineInfo.height / 2;
+        app.stage.addChild(spineBody);
+        // 获取 Spine 动画的宽高
+        const width = spineInfo.width;
+        const height = spineInfo.height;
+        console.log("spineInfo", spineInfo, window.innerHeight);
+
+        // 更新 div 内容
+        const infoDiv = document.getElementById("spine-info");
+        infoDiv.innerHTML = `
+          <div class='item'><span>width: </span>${width}</div>
+          <div class='item'><span>height: </span>${height}</div>
+          <div class='item'><span>x: </span>${spineInfo.x}</div>
+          <div class='item'><span>y: </span>${spineInfo.y}</div>
+        `;
+        getAllAnimations(spineBody);
+      }
+      async function init(json, atlas) {
+        app = new window.PIXI.Application();
+        console.log("app", app, window.spine);
+        await app.init({
+          // backgroundColor: 0x1099bb,
+          backgroundAlpha: 0,
+          resizeTo: window,
+          antialias: true,
+          autoDensity: true,
+        });
+        document.getElementById("animation-player").appendChild(this.app.view);
+        // const texture = await PIXI.Assets.load(
+        //   "https://pixijs.com/assets/bunny.png"
+        // );
+
+        // const bunny = new PIXI.Sprite(texture);
+        // bunny.anchor.set(0.5);
+        // bunny.x = app.screen.width / 2;
+        // bunny.y = app.screen.height / 2;
+        // app.stage.addChild(bunny);
+        playSpine(json, atlas);
+      }
+      const animationPlayer = document.querySelector("#animation-player");
+      const colors = {
+        1: "#000",
+        2: "#FFF",
+        3: "#00bcd3",
+      };
+      function changeBg(type) {
+        animationPlayer.style.backgroundColor = colors[type];
+      }
+    </script>
+  </body>
+</html>

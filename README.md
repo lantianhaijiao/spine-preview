@@ -1,58 +1,52 @@
-# boast README
+<!--
+ * @Author: haobin.wang
+ * @Date: 2024-12-17 11:43:12
+ * @LastEditors: haobin.wang
+ * @LastEditTime: 2025-03-28 16:24:38
+ * @Description: Do not edit
+-->
+# Spine Preview
 
-彩虹屁和一些小功能
 
 ## Features
 
-- cmd+shift+k: 执行夸夸
-- 去掉console选中代码，执行快捷键cmd+shift+r
-- 右键查看文件详情
-- 选中文本后右键 实现 rgb<=>hex互相转换
-![alt text](image-1.png)
+Spine File Preview: A Visual Studio Code extension for previewing Spine animation with ease and efficiency.
 
-  ![alt text](image.png)
 ## Requirements
-
+- Visual Studio Code version 1.87.0 or higher.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- `spine-preview.enable`: Enable/disable the Spine Preview extension.
+- `spine-preview.autoReload`: Automatically reload the preview when the file changes.
 
 ## Known Issues
 
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
 
-### 0.0.2
+### 1.0.0
 
-增加右键【文件详情】
-增加选中颜色后，右键【rbg<=>hex】格式互换
+Initial release of Spine Preview with the following features:
 
-
-### 0.0.1
-
-增加夸夸和【去掉console.xxx】
-
----
+- Preview Spine files directly within Visual Studio Code.
+- Support pause and resume playback
 
 ## Following extension guidelines
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
 
 ## Working with Markdown
 
 ## For more information
 
+## Contact Information
+
+For any inquiries or support, please contact:
+
+- Email: 1159472304@qq.com
+- GitHub Issues: [Submit an Issue](https://github.com/lantianhaijiao)
 
 **Enjoy!**
