@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-04-24 15:14:55
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-28 16:36:15
+ * @LastEditTime: 2025-03-29 21:43:05
  * @Description: Do not edit
  */
 import * as vscode from "vscode";
@@ -79,7 +79,7 @@ export default (context: vscode.ExtensionContext) => {
           vscode.Uri.file(
             path.join(
               context.extensionPath,
-              "dist/webview/spine-pixi-v8.min.js"
+              "dist/webview/pixi-spine.js"
             )
           )
         );
@@ -89,7 +89,7 @@ export default (context: vscode.ExtensionContext) => {
           fastDiffUri.toString()
         );
         updatedHtmlContent = updatedHtmlContent.replaceAll(
-          "./spine-pixi-v8.min.js",
+          "./pixi-spine",
           spineUri.toString()
         );
         // 设置 Webview 内容
