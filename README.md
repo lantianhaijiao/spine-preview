@@ -2,16 +2,14 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-29 22:15:31
+ * @LastEditTime: 2025-03-31 11:26:21
  * @Description: Do not edit
 -->
-# Spine Preview
-
+# Spine Preview [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-blue)](https://marketplace.visualstudio.com/items?itemName=lantianhaijiao.spine-preview)
 
 ## Features
 
-Spine File Preview: A Visual Studio Code extension for previewing Spine animation with ease and efficiency.
-
+Spine File Preview: A Visual Studio Code extension based on pixi.js that allows you to preview Spine animations easily and efficiently.
 ## Requirements
 - Visual Studio Code version 1.87.0 or higher.
 
@@ -23,7 +21,7 @@ This extension contributes the following settings:
 - `spine-preview.autoReload`: Automatically reload the preview when the file changes.
 
 ## Known Issues
-
+Support pixi.js version user-controlled switching playback
 
 ## Release Notes
 
@@ -32,9 +30,9 @@ This extension contributes the following settings:
 Initial release of Spine Preview with the following features:
 
 - Preview Spine files directly within Visual Studio Code.
-- Support pause and resume playback
+- Support viewing animation information
 - Step
-- Right click the folder containing .json, .atlas, .png, and click [Play Spine]
+- Right-click the folder containing .json, .atlas, .png (the files need to have the same name), then click [Play Spine]
 ![eg](src/images/spine-preview.png)
 
 
@@ -51,5 +49,15 @@ For any inquiries or support, please contact:
 
 - Email: 1159472304@qq.com
 - GitHub Issues: [Submit an Issue](https://github.com/lantianhaijiao)
+
+## Contributors
+- [lantianhaijiao](https://github.com/lantianhaijiao)
+- [main2018](https://github.com/main2018)
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2025-present, haobin.wang
 
 **Enjoy!**

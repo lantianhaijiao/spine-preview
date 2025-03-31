@@ -1,0 +1,51 @@
+name: VS Code Extension CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [">12.x"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Compile code
+        run: npm run compile
+
+      - name: Compile tests
+        run: npm run compile-tests
+
+      - name: Run tests
+        run: npm test
+
+      - name: Package extension
+        if: github.ref == 'refs/heads/main'
+        run: npm run package
+
+      - name: Publish extension (if tagged release)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx vsce publish --pat $VSCE_PAT
+    
