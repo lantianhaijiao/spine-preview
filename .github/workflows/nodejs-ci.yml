@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .vscode-test
-          key: ${{ runner.os }}-vscode-${{ hashFiles('package.json') }}-${{ '1.94.2' }}
+          key: ${{ runner.os }}-vscode-${{ hashFiles('package.json') }}-${{ '1.98.2' }}
 
       - name: Check cache status
         run: |
@@ -53,6 +53,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install vsce
+        run: npm install -g vsce
 
       - name: Lint code
         run: npm run lint
@@ -72,7 +75,7 @@ jobs:
           sleep 5  # 等待 XVFB 服务启动
 
       - name: Set VS Code version environment variable
-        run: echo "VSCODE_VERSION=1.94.2" >> $GITHUB_ENV
+        run: echo "VSCODE_VERSION=1.98.2" >> $GITHUB_ENV
 
       - name: Run tests
         env:
