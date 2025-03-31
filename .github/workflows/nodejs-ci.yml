@@ -68,14 +68,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xvfb
           export DISPLAY=:99.0
-          Xvfb :99 -screen 0 1024x768x24 > xvfb.log 2>&1 &
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
           sleep 5  # 等待 XVFB 服务启动
-          if ! ps -ef | grep -q [X]vfb; then
-            echo "XVFB failed to start."
-            cat xvfb.log
-            exit 1
-          fi
-          echo $DISPLAY  # 打印 DISPLAY 环境变量，用于调试
 
       - name: Set VS Code version environment variable
         run: echo "VSCODE_VERSION=1.94.2" >> $GITHUB_ENV
