@@ -2,10 +2,19 @@ name: VS Code Extension CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 'temp-*'  # 支持以 temp- 开头的分支
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:  # 新增：支持手动触发工作流
+    branches:
+      - main
+      - 'temp-*'
+  workflow_dispatch:  # 支持手动触发工作流
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'main'
 
 jobs:
   build:
@@ -13,11 +22,13 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [">16.x"]
+        node-version: [">12.x"]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -52,11 +63,26 @@ jobs:
       - name: Compile tests
         run: npm run compile-tests
 
+      - name: Set up XVFB
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+          export DISPLAY=:99.0
+          Xvfb :99 -screen 0 1024x768x24 > xvfb.log 2>&1 &
+          sleep 5  # 等待 XVFB 服务启动
+          if ! ps -ef | grep -q [X]vfb; then
+            echo "XVFB failed to start."
+            cat xvfb.log
+            exit 1
+          fi
+          echo $DISPLAY  # 打印 DISPLAY 环境变量，用于调试
+
       - name: Set VS Code version environment variable
         run: echo "VSCODE_VERSION=1.94.2" >> $GITHUB_ENV
 
       - name: Run tests
         env:
+          DISPLAY: :99.0  # 确保 DISPLAY 环境变量在测试步骤中生效
           VSCODE_CACHE_PATH: .vscode-test
           USE_VSCODE_VERSION_FROM_ENV: true  # 假设测试脚本支持通过环境变量指定版本
         run: npm test
