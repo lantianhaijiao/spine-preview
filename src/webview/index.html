@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
@@ -74,7 +74,7 @@
       }
       #spine-info-box span {
         display: inline-block;
-        min-width: 40px;
+        min-width: 50px;
       }
 
       /* 选择框样式 */
@@ -130,7 +130,7 @@
         transform-origin: 0 50%;
       }
       #slider-y span,
-      #slider-scale span{
+      #slider-scale span {
         flex-shrink: 0;
       }
       .slider::-webkit-slider-thumb {
@@ -162,9 +162,12 @@
     <div id="animation-player"></div>
     <div id="spine-info-box">
       <h3>Spine信息</h3>
-      <div id="spine-info"></div>
+      <div id="spine-info">
+        <div id="normal-info"></div>
+        <div class="item duration"></div>
+      </div>
       <div class="slider-box-y">
-        <span>y：</span>
+        <span>y: </span>
         <input
           type="range"
           id="slider-y"
@@ -177,7 +180,7 @@
         <!-- <button id="resetButton" class="reset-y">Reset</button> -->
       </div>
       <div class="slider-box-scale">
-        <span>scale：</span>
+        <span>scale: </span>
         <input
           type="range"
           id="slider-scale"
@@ -225,9 +228,11 @@
       async function setSpineY(spineBody) {
         const slider = document.getElementById("slider-y");
         const spineInfo = spineBody.getBounds();
-        let originY = spineBody.y;
+        let originY = 0;
         setTimeout(() => {
           slider.value = spineBody.y;
+          originY = spineBody.y;
+          console.log("originY", originY);
         }, 0);
         slider.max = window.innerHeight + spineInfo.height;
         slider.addEventListener("input", function () {
@@ -242,6 +247,7 @@
       }
       async function getAllAnimations(spineBody) {
         // 获取所有动画名称
+        const duration = document.querySelector(".duration");
         const animations = spineBody.skeleton.data.animations;
         const animationNames = [];
         animations.forEach((animation) => {
@@ -259,17 +265,20 @@
         // 播放第一个动画
         if (animationNames.length > 0) {
           spineBody.state.setAnimation(0, animationNames[0], true);
+          duration.innerHTML = `<span>duration: </span>${animations[0].duration}`;
         }
         // 监听选择事件
         selector.addEventListener("change", (event) => {
           const selectedAnimation = event.target.value;
           spineBody.state.setAnimation(0, selectedAnimation, true);
+          const r = animations.find((k) => k.name == selectedAnimation);
+          duration.innerHTML = `<span>duration: </span>${r.duration}`;
         });
         setSpineY(spineBody);
         setScale(spineBody);
       }
       async function playSpine(json, atlas) {
-        // // 加载 Spine 资源
+        // // pixi8 加载 Spine 资源
         // PIXI.Assets.add({
         //   alias: "spineData",
         //   src: json,
@@ -287,24 +296,36 @@
         // });
         const res = await PIXI.Assets.load(json);
         const spineBody = new PIXI.spine.Spine(res.spineData);
-        const spineInfo = spineBody.getBounds();
         spineBody.state.data.defaultMix = 0.2;
         spineBody.x = window.innerWidth / 2;
-        spineBody.y = window.innerHeight / 2 +  + spineInfo.height / 2;
         app.stage.addChild(spineBody);
         // 获取 Spine 动画的宽高
-        const width = spineInfo.width;
-        const height = spineInfo.height;
-        console.log("spineInfo", spineInfo, window.innerHeight);
-
-        // 更新 div 内容
-        const infoDiv = document.getElementById("spine-info");
-        infoDiv.innerHTML = `
-          <div class='item'><span>width: </span>${width}</div>
-          <div class='item'><span>height: </span>${height}</div>
-          <div class='item'><span>x: </span>${spineInfo.x}</div>
-          <div class='item'><span>y: </span>${spineInfo.y}</div>
-        `;
+        setTimeout(() => {
+          const spineInfo = spineBody.getBounds();
+          spineBody.y = window.innerHeight / 2 + +spineInfo.height / 2;
+          const width = spineInfo.width;
+          const height = spineInfo.height;
+          console.log("spineInfo", spineBody.getBounds(), spineBody);
+          console.table({
+            width: spineBody.width,
+            height: spineBody.height,
+            x: spineBody.x,
+            y: spineBody.y,
+          });
+          // 获取 Spine 要求的版本
+          const spineVersion = spineBody.stateData.skeletonData.version;
+          console.log("Spine 要求的版本:", spineVersion);
+          console.log("所有动画", spineBody.skeleton.data.animations);
+          // 更新 div 内容
+          const infoDiv = document.getElementById("normal-info");
+          infoDiv.innerHTML = `
+            <div class='item'><span>width: </span>${width}</div>
+            <div class='item'><span>height: </span>${height}</div>
+            <div class='item'><span>x: </span>${spineInfo.x}</div>
+            <div class='item'><span>y: </span>${spineInfo.y}</div>
+            <div class='item'><span>version: </span>${spineVersion}</div>
+          `;
+        }, 0);
         getAllAnimations(spineBody);
       }
       async function init(json, atlas) {
