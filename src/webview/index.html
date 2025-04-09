@@ -201,11 +201,14 @@
     <script>
       // const vscode = acquireVsCodeApi();
       var app;
+      var loadFileData = null;
       // 监听来自扩展的消息
       window.addEventListener("message", (event) => {
         const message = event.data;
         // console.log('message--', event.data);
         if (message.type === "loadFile") {
+          console.log('Spine Version: ', message.version, message.useSpineV8);
+          loadFileData = message;
           init(message.json, message.atlas).catch((err) => {
             console.log("onError", err);
           });
@@ -294,8 +297,26 @@
         //   skeleton: "spineData",
         //   scale: 0.5,
         // });
-        const res = await PIXI.Assets.load(json);
-        const spineBody = new PIXI.spine.Spine(res.spineData);
+        let spineBody = null;
+        if (loadFileData.useSpineV8) {
+          console.log("使用 Spine V8", json, atlas);
+          
+          PIXI.Assets.add({alias: "spineboyData", src: json});
+          PIXI.Assets.add({alias: "spineboyAtlas", src: atlas});
+          console.log("使用 Spine V8000000", json, atlas);
+
+          await PIXI.Assets.load(["spineboyData", "spineboyAtlas"]);
+          spineBody = window.spine.Spine.from({
+            atlas: "spineboyAtlas",
+            skeleton: "spineboyData",
+          })
+          console.log("使用 Spine V811111111");
+
+        } else {
+          const res = await PIXI.Assets.load(json);
+          spineBody = new PIXI.spine.Spine(res.spineData);
+        }
+        
         spineBody.state.data.defaultMix = 0.2;
         spineBody.x = window.innerWidth / 2;
         app.stage.addChild(spineBody);
@@ -313,7 +334,9 @@
             y: spineBody.y,
           });
           // 获取 Spine 要求的版本
-          const spineVersion = spineBody.stateData.skeletonData.version;
+          console.log(spineBody, 777777);
+          
+          const spineVersion = loadFileData.useSpineV8 ? spineBody.state.data.skeletonData.version : spineBody.stateData.skeletonData.version;
           console.log("Spine 要求的版本:", spineVersion);
           console.log("所有动画", spineBody.skeleton.data.animations);
           // 更新 div 内容
@@ -338,13 +361,15 @@
         //   antialias: true,
         //   autoDensity: true,
         // });
-        app = new window.PIXI.Application({
+        const config = {
           backgroundAlpha: 0,
           resizeTo: window,
           antialias: true,
           autoDensity: true,
-        });
-        document.getElementById("animation-player").appendChild(this.app.view);
+        }
+        app = new window.PIXI.Application(loadFileData.useSpineV8 ? null : config);
+        if (loadFileData.useSpineV8) await app.init(config);
+        document.getElementById("animation-player").appendChild(loadFileData.useSpineV8 ? app.canvas : app.view);
         // const texture = await PIXI.Assets.load(
         //   "https://pixijs.com/assets/bunny.png"
         // );

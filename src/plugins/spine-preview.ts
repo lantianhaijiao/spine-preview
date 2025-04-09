@@ -1,37 +1,43 @@
 /*
  * @Author: haobin.wang
  * @Date: 2024-04-24 15:14:55
- * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-29 21:43:05
+ * @LastEditors: wangpan pan.wang@ushow.media
+ * @LastEditTime: 2025-04-09 14:40:21
  * @Description: Do not edit
  */
 import * as vscode from "vscode";
 const fs = require("fs");
 const path = require("path");
+import getSpineVersion, {qmCompareVersion} from "../utils/version";
+
+const SPINE_FILES_EXT = [".json", ".atlas", ".png"];
+
 export default (context: vscode.ExtensionContext) => {
   let disposable = vscode.commands.registerCommand(
     "spine.preview",
     async (uri) => {
-      console.log("uri8", uri);
+      console.log("uri8", uri, 88888888);
       // 获取文件大小
+      vscode.window.showErrorMessage(uri);
       if (!uri) {
         vscode.window.showErrorMessage(`文件路径无效~ 请右键点击【播放spine】`);
         return;
       }
       // 获取文件的基本信息
-      const filePath = uri.fsPath;
+      let filePath = uri.fsPath;
       const jsonFiles: string[] = [];
       const atlasFiles: string[] = [];
 
       // 遍历文件夹，找出 JSON 和 ATLAS 文件
-      function traverseDir(dir: string) {
+      function traverseDir(dir: string, filename: string) {
         const files = fs.readdirSync(dir);
         files.forEach((file: any) => {
           const filePath = path.join(dir, file);
           const stats = fs.statSync(filePath);
           if (stats.isDirectory()) {
-            traverseDir(filePath);
+            traverseDir(filePath, filename);
           } else {
+            if (filename && path.basename(filePath, path.extname(filePath)) !== filename) { return; }
             const ext = path.extname(file);
             if (ext === ".json") {
               jsonFiles.push(filePath);
@@ -41,7 +47,14 @@ export default (context: vscode.ExtensionContext) => {
           }
         });
       }
-      traverseDir(filePath);
+      console.log("filePath", filePath);
+      const stats = fs.statSync(filePath);
+      let filename = '';
+      if (!stats.isDirectory()) {
+        filename = path.basename(filePath, path.extname(filePath));
+        filePath = path.dirname(filePath);
+      }
+      traverseDir(filePath, filename);
       // 简单选择第一个匹配的 JSON 和 ATLAS 文件（实际可优化为用户选择）
       const jsonPath = jsonFiles[0];
       const atlasPath = atlasFiles.find(
@@ -49,6 +62,7 @@ export default (context: vscode.ExtensionContext) => {
           path.basename(atlas, ".atlas") === path.basename(jsonPath, ".json")
       );
       if (jsonPath && atlasPath) {
+        const spineVersion = getSpineVersion(jsonPath);
         let webviewPanel: vscode.WebviewPanel | null = null;
         webviewPanel = vscode.window.createWebviewPanel(
           "spinePreview",
@@ -70,16 +84,17 @@ export default (context: vscode.ExtensionContext) => {
         );
         // console.log("htmlPath", htmlPath);
         const htmlContent = fs.readFileSync(htmlPath, "utf-8");
+        const useSpineV8 = qmCompareVersion(String(spineVersion), '4.1') === 1;
         const fastDiffUri = webviewPanel.webview.asWebviewUri(
           vscode.Uri.file(
-            path.join(context.extensionPath, "dist/webview/pixi.min.js")
+            path.join(context.extensionPath, `dist/webview/${useSpineV8 ? "pixi-v8" : "pixi"}.min.js`)
           )
         );
         const spineUri = webviewPanel.webview.asWebviewUri(
           vscode.Uri.file(
             path.join(
               context.extensionPath,
-              "dist/webview/pixi-spine.js"
+              `dist/webview/${useSpineV8 ? "spine-pixi-v8.min" : "pixi-spine"}.js`
             )
           )
         );
@@ -121,11 +136,13 @@ export default (context: vscode.ExtensionContext) => {
             type: "loadFile",
             json: jsonUri.toString(),
             atlas: atlasUri.toString(),
+            version: spineVersion,
+            useSpineV8,
           });
         };
         noticeWebviewFile();
         // 处理自定义编辑器生命周期
-        webviewPanel.onDidDispose(() => {
+        webviewPanel.onDidDispose(() => { // 关闭时清理
           webviewPanel = null;
         });
       } else {

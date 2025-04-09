@@ -36,14 +36,12 @@
       "explorer/context": [
         {
           "command": "spine.preview",
-          "group": "navigation",
-          "when": "explorerResourceIsFolder"
+          "group": "navigation"
         }
       ]
     }
   },
   "activationEvents": [
-    "onCommand:spine.preview"
   ],
   "scripts": {
     "vscode:prepublish": "npm run build",
