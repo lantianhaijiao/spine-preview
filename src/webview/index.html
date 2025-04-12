@@ -78,7 +78,7 @@
       }
 
       /* 选择框样式 */
-      #animationSelector {
+      #animationSelector, #skinSelector {
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -93,26 +93,26 @@
         background-repeat: no-repeat;
         background-position: right 10px center;
         background-size: 16px;
-        margin: 0 10px;
+        margin: 0 5px;
       }
 
-      #animationSelector:hover {
+      #animationSelector:hover, #skinSelector:hover {
         border-color: #999;
       }
 
-      #animationSelector:focus {
+      #animationSelector:focus,  #skinSelector:focus {
         outline: none;
         border-color: #007bff;
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
       }
 
       /* 选项样式 */
-      #animationSelector option {
+      #animationSelector option,  #skinSelector option {
         background-color: #fff;
         color: #333;
       }
 
-      #animationSelector option:hover {
+      #animationSelector option:hover,  #skinSelector option:hover {
         background-color: #f0f0f0;
       }
       .slider-box-y,
@@ -197,6 +197,7 @@
       <div class="btn btn-2" onclick="changeBg(2)"></div>
       <div class="btn btn-3" onclick="changeBg(3)"></div>
       <select id="animationSelector"></select>
+      <select id="skinSelector"></select>
     </div>
     <script>
       // const vscode = acquireVsCodeApi();
@@ -280,6 +281,34 @@
         setSpineY(spineBody);
         setScale(spineBody);
       }
+      async function getAllSkins(spineBody) {
+        // 获取所有动画名称
+        const selector = document.getElementById("skinSelector");
+        const skins = spineBody.skeleton.data.skins;
+        if (skins && skins.length < 2) {
+          selector.style.display = 'none'
+          return
+        };
+        const skinsNames = [];
+        skins.forEach((animation) => {
+          skinsNames.push(animation.name);
+        });
+
+        // 创建 select 选择框
+        skinsNames.forEach((name) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          selector.appendChild(option);
+        });
+        // 监听选择事件
+        selector.addEventListener("change", (event) => {
+          const selectedSkin = event.target.value;
+          console.log('设置皮肤: ', selectedSkin);
+          spineBody.skeleton.setSkinByName(selectedSkin);
+          spineBody.skeleton.setSlotsToSetupPose();
+        });
+      }
       async function playSpine(json, atlas) {
         // // pixi8 加载 Spine 资源
         // PIXI.Assets.add({
@@ -350,6 +379,7 @@
           `;
         }, 0);
         getAllAnimations(spineBody);
+        getAllSkins(spineBody);
       }
       async function init(json, atlas) {
         // app = new window.PIXI.Application();

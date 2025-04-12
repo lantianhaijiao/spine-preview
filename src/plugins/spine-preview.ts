@@ -1,8 +1,8 @@
 /*
  * @Author: haobin.wang
  * @Date: 2024-04-24 15:14:55
- * @LastEditors: wangpan pan.wang@ushow.media
- * @LastEditTime: 2025-04-09 14:40:21
+ * @LastEditors: haobin.wang
+ * @LastEditTime: 2025-04-09 15:43:01
  * @Description: Do not edit
  */
 import * as vscode from "vscode";
@@ -16,7 +16,7 @@ export default (context: vscode.ExtensionContext) => {
   let disposable = vscode.commands.registerCommand(
     "spine.preview",
     async (uri) => {
-      console.log("uri8", uri, 88888888);
+      console.log("uri8", uri);
       // 获取文件大小
       vscode.window.showErrorMessage(uri);
       if (!uri) {

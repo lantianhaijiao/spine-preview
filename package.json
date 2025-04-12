@@ -1,7 +1,7 @@
 {
   "name": "spine-preview",
   "displayName": "Spine Preview",
-  "description": "Preview your Spine animations directly in VS Code.",
+  "description": "Preview your Spine(pixi) animations directly in VS Code.",
   "keywords": [
     "spine",
     "Spine",
@@ -15,7 +15,7 @@
   ],
   "author": "whb <1159472304@qq.com>",
   "icon": "favicon.ico",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "publisher": "lantianhaijiao",
   "engines": {
     "vscode": "^1.87.0"
