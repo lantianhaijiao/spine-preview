@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-04-12 12:55:48
+ * @LastEditTime: 2025-04-25 10:14:24
  * @Description: Do not edit
 -->
 # Change Log
@@ -10,6 +10,10 @@
 ### Added
 - Preview folder containing spine animations directly in VS Code.
 - Documentation updates.
+
+## [1.0.5] - 2025-04-25
+### Added
+- Increase speed control
 
 ## [1.0.4] - 2025-04-12
 ### Added

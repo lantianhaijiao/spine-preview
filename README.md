@@ -1,10 +1,11 @@
 <!--
  * @Author: haobin.wang
- * @Date: 2024-12-17 11:43:12
+ * @Date: 2025-03-28 18:31:22
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-03-31 11:26:21
+ * @LastEditTime: 2025-04-18 09:34:39
  * @Description: Do not edit
 -->
+English | [简体中文](./README_zh_CN.md)  
 # Spine Preview [![VS Code](https://img.shields.io/badge/VS%20Code-Extension-blue)](https://marketplace.visualstudio.com/items?itemName=lantianhaijiao.spine-preview)
 
 ## Features

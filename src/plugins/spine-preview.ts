@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-04-24 15:14:55
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-04-09 15:43:01
+ * @LastEditTime: 2025-04-25 11:02:12
  * @Description: Do not edit
  */
 import * as vscode from "vscode";
@@ -66,7 +66,7 @@ export default (context: vscode.ExtensionContext) => {
         let webviewPanel: vscode.WebviewPanel | null = null;
         webviewPanel = vscode.window.createWebviewPanel(
           "spinePreview",
-          "spine preview",
+          "Spine Preview",
           vscode.ViewColumn.One,
           {
             enableScripts: true,
@@ -74,7 +74,7 @@ export default (context: vscode.ExtensionContext) => {
               vscode.Uri.file(path.join(context.extensionPath, "dist")),
               vscode.Uri.file(path.dirname(filePath)),
             ],
-            retainContextWhenHidden: true 
+            retainContextWhenHidden: true
           }
         );
         // 将文件 URI 转为 Webview 可访问的路径
@@ -83,6 +83,8 @@ export default (context: vscode.ExtensionContext) => {
           "dist/webview/index.html"
         );
         // console.log("htmlPath", htmlPath);
+        const iconPath = vscode.Uri.file(path.join(context.extensionPath, 'dist/favicon.ico'));
+        const iconWebviewUri = webviewPanel.webview.asWebviewUri(iconPath);
         const htmlContent = fs.readFileSync(htmlPath, "utf-8");
         const useSpineV8 = qmCompareVersion(String(spineVersion), '4.1') === 1;
         const fastDiffUri = webviewPanel.webview.asWebviewUri(
@@ -106,6 +108,10 @@ export default (context: vscode.ExtensionContext) => {
         updatedHtmlContent = updatedHtmlContent.replaceAll(
           "./pixi-spine",
           spineUri.toString()
+        );
+        updatedHtmlContent = updatedHtmlContent.replaceAll(
+          "/favicon.ico",
+          iconWebviewUri.toString()
         );
         // 设置 Webview 内容
         webviewPanel.webview.html = updatedHtmlContent;

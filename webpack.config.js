@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-04-09 15:48:35
+ * @LastEditTime: 2025-04-25 10:20:30
  * @Description: Do not edit
  */
 //@ts-check
@@ -49,6 +49,7 @@ module.exports = (env, argv) => {
         ],
       }),
       new HtmlWebpackPlugin({
+        favicon: path.resolve(__dirname, "./favicon.ico"),
         minify: {
           caseSensitive: false, // 是否大小写敏感
           collapseBooleanAttributes: true, // 是否简写boolean格式的属性如：disabled="disabled" 简写为disabled

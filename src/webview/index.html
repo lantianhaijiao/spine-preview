@@ -13,12 +13,16 @@
     />
     <meta content="telephone=no" name="format-detection" />
     <meta content="email=no" name="format-detection" />
+    <link rel="icon" href="/favicon.ico">
     <title>Spine Preview</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         border: 0;
+      }
+      input{
+        outline: none !important;
       }
       body {
         padding: 0 !important;
@@ -43,6 +47,24 @@
         justify-content: center;
         align-items: center;
       }
+      h2{
+        margin-top: 0;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        height: 36px;
+        padding: 0;
+        line-height: 36px;
+        display: flex;
+        align-items: center;
+      }
+      h2 span{
+        margin: 0 5px;
+      }
+      h2 img{
+        width: 25px;
+        height: 25px;
+        vertical-align: middle;
+      }
       .btn {
         width: 34px;
         height: 34px;
@@ -60,6 +82,9 @@
       .btn-3 {
         background-color: #00bcd3;
       }
+      #normal-info .item{
+        margin-bottom: 5px;
+      }
       #spine-info-box {
         position: fixed;
         background-color: rgba(0, 0, 0, 0.5);
@@ -68,17 +93,52 @@
         left: 0;
         color: rgba(255, 255, 255, 0.8);
         font-size: 12px;
-        padding: 10px;
-        min-height: 50px;
+        padding: 10px 15px 15px;
+        min-height: 45px;
         border-radius: 2px;
+        transition: all 0.3s;
+      }
+      #spine-info-box.hide{
+        height: 45px;
+        overflow: hidden;
+        padding-bottom: 0;
+      }
+      #spine-info-box.hide .open{
+        transform: rotate(180deg);
+      }
+      #spine-info-box .open{
+        position: absolute;
+        left: calc(50% - 25px);
+        bottom: -4px;
+        transition: all 0.3s;
+        transform-origin: 50% 50%;
+        width: 50px;
+        text-align: center;
+      }
+      #spine-info-box .open::after{
+        content: '';
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid #d3dce6;
+        cursor: pointer;
+        display: inline-block;
+        padding-top: 5px;
       }
       #spine-info-box span {
         display: inline-block;
-        min-width: 50px;
+        min-width: 60px;
+        flex-shrink: 0;
+      }
+      #spine-info{
+        padding-top: 10px;
+        margin-bottom: 5px;
       }
 
       /* 选择框样式 */
-      #animationSelector, #skinSelector {
+      #animationSelector,
+      #skinSelector {
         appearance: none;
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -93,44 +153,45 @@
         background-repeat: no-repeat;
         background-position: right 10px center;
         background-size: 16px;
-        margin: 0 5px;
+        margin: 0 10px;
       }
 
-      #animationSelector:hover, #skinSelector:hover {
+      #animationSelector:hover,
+      #skinSelector:hover {
         border-color: #999;
       }
 
-      #animationSelector:focus,  #skinSelector:focus {
+      #animationSelector:focus,
+      #skinSelector:focus {
         outline: none;
         border-color: #007bff;
         box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
       }
 
       /* 选项样式 */
-      #animationSelector option,  #skinSelector option {
+      #animationSelector option,
+      #skinSelector option {
         background-color: #fff;
         color: #333;
       }
 
-      #animationSelector option:hover,  #skinSelector option:hover {
+      #animationSelector option:hover,
+      #skinSelector option:hover {
         background-color: #f0f0f0;
       }
-      .slider-box-y,
-      .slider-box-scale {
+      .slider-item{
         display: flex;
         align-items: center;
-        margin-top: 3px;
+        margin-bottom: 5px;
       }
-      #slider-y,
-      #slider-scale {
+      .slider {
         width: 100%;
         height: 20px;
         outline: none;
-        transform: scale(0.7);
+        transform: scale(0.9);
         transform-origin: 0 50%;
       }
-      #slider-y span,
-      #slider-scale span {
+      .slider >span{
         flex-shrink: 0;
       }
       .slider::-webkit-slider-thumb {
@@ -154,6 +215,10 @@
         background-size: 100%;
         flex-shrink: 0;
       }
+      .scale-text, .speed-text, .y-text{
+        min-width: auto !important;
+        font-size: 10px;
+      }
     </style>
   </head>
   <body>
@@ -161,13 +226,13 @@
     <script src="./pixi-spine"></script>
     <div id="animation-player"></div>
     <div id="spine-info-box">
-      <h3>Spine信息</h3>
+      <h2>Spine信息</h2>
       <div id="spine-info">
         <div id="normal-info"></div>
         <div class="item duration"></div>
       </div>
-      <div class="slider-box-y">
-        <span>y: </span>
+      <div class="slider-box-y slider-item">
+        <span>y: <span class="y-text">1.00</span></span>
         <input
           type="range"
           id="slider-y"
@@ -179,18 +244,31 @@
         <div id="resetButton" class="reset-y"></div>
         <!-- <button id="resetButton" class="reset-y">Reset</button> -->
       </div>
-      <div class="slider-box-scale">
-        <span>scale: </span>
+      <div class="slider-box-scale slider-item">
+        <span>scale: <span class="scale-text">1.00</span></span>
         <input
           type="range"
           id="slider-scale"
           class="slider"
           min="0"
-          max="100"
+          max="150"
           value="50"
         />
         <div id="resetButton" class="reset-scale"></div>
       </div>
+      <div class="slider-box-speed slider-item">
+        <span>speed: <span class="speed-text">1.00</span></span>
+        <input
+          type="range"
+          id="slider-speed"
+          class="slider"
+          min="5"
+          max="150"
+          value="50"
+        />
+        <div id="resetButton" class="reset-speed"></div>
+      </div>
+      <div class="open"></div>
     </div>
     <div class="button-container">
       <div class="btn btn-1" onclick="changeBg(1)"></div>
@@ -217,36 +295,59 @@
       });
       async function setScale(spineBody) {
         const slider = document.getElementById("slider-scale");
+        const scaleT = document.getElementsByClassName('scale-text')[0];
         const spineInfo = spineBody.getBounds();
-        slider.max = 100;
+        slider.max = 150;
         slider.addEventListener("input", function () {
           const newValue = (this.value / 50).toFixed(2);
           spineBody.scale.set(newValue);
+          scaleT.innerText = newValue;
         });
         const resetButton = document.querySelector(".reset-scale");
         resetButton.addEventListener("click", function () {
           spineBody.scale.set(1);
           slider.value = 50;
+          scaleT.innerText = 1.00;
         });
       }
       async function setSpineY(spineBody) {
         const slider = document.getElementById("slider-y");
+        const yT = document.getElementsByClassName('y-text')[0];
         const spineInfo = spineBody.getBounds();
         let originY = 0;
         setTimeout(() => {
           slider.value = spineBody.y;
-          originY = spineBody.y;
+          originY = spineBody.y.toFixed(1);
           console.log("originY", originY);
+          yT.innerText = originY;
         }, 0);
         slider.max = window.innerHeight + spineInfo.height;
         slider.addEventListener("input", function () {
-          const newValue = slider.max - parseInt(this.value);
+          const newValue = (slider.max - parseInt(this.value)).toFixed(1);
           spineBody.y = newValue;
+          yT.innerText = newValue;
         });
         const resetButton = document.querySelector(".reset-y");
         resetButton.addEventListener("click", function () {
           spineBody.y = originY;
           slider.value = originY;
+          yT.innerText = originY;
+        });
+      }
+      function setSpeed(spineBody, trackEntry) {
+        const slider = document.getElementById("slider-speed");
+        const speedT = document.getElementsByClassName('speed-text')[0];
+        slider.max = 150;
+        slider.addEventListener("input", function () {
+          const newValue = (this.value / 50).toFixed(2);
+          trackEntry.timeScale = newValue;
+          speedT.innerText = newValue;
+        });
+        const resetButton = document.querySelector(".reset-speed");
+        resetButton.addEventListener("click", function () {
+          trackEntry.timeScale = 1;
+          slider.value = 50;
+          speedT.innerText = 1.00;
         });
       }
       async function getAllAnimations(spineBody) {
@@ -267,19 +368,21 @@
           selector.appendChild(option);
         });
         // 播放第一个动画
+        let trackEntry = null;
         if (animationNames.length > 0) {
-          spineBody.state.setAnimation(0, animationNames[0], true);
+          trackEntry = spineBody.state.setAnimation(0, animationNames[0], true);
           duration.innerHTML = `<span>duration: </span>${animations[0].duration}`;
         }
         // 监听选择事件
         selector.addEventListener("change", (event) => {
           const selectedAnimation = event.target.value;
-          spineBody.state.setAnimation(0, selectedAnimation, true);
+          trackEntry = spineBody.state.setAnimation(0, selectedAnimation, true);
           const r = animations.find((k) => k.name == selectedAnimation);
           duration.innerHTML = `<span>duration: </span>${r.duration}`;
         });
         setSpineY(spineBody);
         setScale(spineBody);
+        setSpeed(spineBody, trackEntry);
       }
       async function getAllSkins(spineBody) {
         // 获取所有动画名称
@@ -420,6 +523,11 @@
       function changeBg(type) {
         animationPlayer.style.backgroundColor = colors[type];
       }
+      const open = document.getElementsByClassName('open')[0];
+      const spineInfo = document.getElementById('spine-info-box');
+      open.addEventListener('click', () => {
+        spineInfo.classList.toggle('hide');
+      });
     </script>
   </body>
 </html>
