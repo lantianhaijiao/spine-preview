@@ -376,6 +376,15 @@
         // 监听选择事件
         selector.addEventListener("change", (event) => {
           const selectedAnimation = event.target.value;
+          // 解决切换动画时动画残留问题（总是会有第一动画的残留）
+          // 原因： setAnimation 默认会做动画混合，前一动画的影响会残留。
+          // 解决： 清除所有动画，并重置骨骼和插槽到初始状态
+          // spineBody.state.clearTrack(0);
+          spineBody.state.clearTracks();
+          spineBody.skeleton.setToSetupPose();
+          // spineBody.skeleton.setSlotsToSetupPose();
+          // end 解决切换动画时动画残留问题
+
           trackEntry = spineBody.state.setAnimation(0, selectedAnimation, true);
           const r = animations.find((k) => k.name == selectedAnimation);
           duration.innerHTML = `<span>duration: </span>${r.duration}`;
