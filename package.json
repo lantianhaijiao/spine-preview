@@ -15,13 +15,12 @@
   ],
   "author": "whb <1159472304@qq.com>",
   "icon": "favicon.ico",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "publisher": "lantianhaijiao",
   "engines": {
-    "vscode": "^1.87.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
-    "Visualization",
     "Other"
   ],
   "main": "./dist/extension.js",
@@ -29,7 +28,7 @@
     "commands": [
       {
         "command": "spine.preview",
-        "title": "播放spine"
+        "title": "play spine"
       }
     ],
     "menus": {
@@ -58,7 +57,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
-    "@types/vscode": "^1.87.0",
+    "@types/vscode": "^1.75.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@vscode/test-cli": "^0.0.8",

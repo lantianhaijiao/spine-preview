@@ -2,7 +2,7 @@
  * @Author: haobin.wang
  * @Date: 2024-12-17 11:43:12
  * @LastEditors: haobin.wang
- * @LastEditTime: 2025-04-25 10:14:24
+ * @LastEditTime: 2025-08-01 15:24:32
  * @Description: Do not edit
 -->
 # Change Log
@@ -10,6 +10,15 @@
 ### Added
 - Preview folder containing spine animations directly in VS Code.
 - Documentation updates.
+
+## [1.0.7] - 2025-08-01
+### Fixed
+- Clear animation residue: setToSetupPose replaces setSlotsToSetupPose
+
+
+## [1.0.6] - 2025-07-20
+### Improvement
+- Category Optimization
 
 ## [1.0.5] - 2025-04-25
 ### Added
